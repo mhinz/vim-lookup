@@ -1,0 +1,16 @@
+Given vim:
+  let s:var = 'foo'
+  let s:var = 'bar'
+  echomsg s:var
+Do:
+  3Gw
+Then (:Lookup cycles through definitions):
+  AssertEqual 3, line('.')
+  Lookup
+  AssertEqual 2, line('.')
+  Lookup
+  AssertEqual 1, line('.')
+  Lookup
+  AssertEqual 2, line('.')
+  Lookup
+  AssertEqual 1, line('.')
