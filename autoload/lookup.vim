@@ -20,12 +20,17 @@ function! lookup#lookup()
 endfunction
 
 "
-" Jump to definition of local function.
+" Jump to a script-local definition:
 "
-" E.g. s:func() or <sid>func().
+"    s:var
+"    s:func()
+"    <sid>var
+"    <sid>func()
 "
 function! s:find_local_definition(name)
-  call search('\c\v^\s*fu%[nction]!?\s+%(s:|\<sid\>)\V'. a:name, 'cesw')
+  if !search('\c\v^\s*fu%[nction]!?\s+%(s:|\<sid\>)\zs\V'. a:name, 'bsw')
+    call search('\c\vlet\s+%(s:|\<sid\>)\zs\V'.a:name.'\s*\=', 'bsw')
+  endif
 endfunction
 
 "
