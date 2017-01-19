@@ -24,12 +24,11 @@ endfunction
 "
 "    s:var
 "    s:func()
-"    <sid>var
 "    <sid>func()
 "
 function! s:find_local_definition(name)
   if !search('\c\v^\s*fu%[nction]!?\s+%(s:|\<sid\>)\zs\V'. a:name, 'bsw')
-    call search('\c\vlet\s+%(s:|\<sid\>)\zs\V'.a:name.'\s*\=', 'bsw')
+    call search('\c\v<let\s+s:\zs\V'.a:name.'\s*\=', 'bsw')
   endif
 endfunction
 

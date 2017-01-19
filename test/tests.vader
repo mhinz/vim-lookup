@@ -4,7 +4,7 @@ Given vim:
   echomsg s:var
 Do:
   3Gw
-Then (:Lookup cycles through definitions):
+Then (:Lookup cycles through script-local variable definitions):
   AssertEqual 3, line('.')
   Lookup
   AssertEqual 2, line('.')

@@ -2,9 +2,9 @@
 
 This plugin knows how to jump to definitions in a Vim buffer:
 
-1. **script-local variables** (`s:var`, `<sid>var`)
-1. **script-local functions** (`s:func()`, `<sid>func()`)
-1. **autoload functions** (`autoload#func()`)
+1. **script-local variables**: _s:var_
+1. **script-local functions**: _s:func()_, _<sid>func()_
+1. **autoload functions**: _autoload#func()_
 
 ### Usage
 
