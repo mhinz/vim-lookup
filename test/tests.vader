@@ -1,16 +1,37 @@
 Given vim:
+  function! s:func(a, b)
+  endfunc
   let s:var = 'foo'
-  let s:var = 'bar'
+  execute 'let s:var = "bar"'
   echomsg s:var
+  let s:var = 'foo'
+  function! s:func(a, b)
+  endfunc
 Do:
-  3Gw
+  6Gw
 Then (:Lookup cycles through script-local variable definitions):
-  AssertEqual 3, line('.')
+  AssertEqual [6, 5], [line('.'), col('.')]
   Lookup
-  AssertEqual 2, line('.')
+  AssertEqual [4, 16], [line('.'), col('.')]
   Lookup
-  AssertEqual 1, line('.')
+  AssertEqual [3, 7], [line('.'), col('.')]
   Lookup
-  AssertEqual 2, line('.')
+  AssertEqual [6, 7], [line('.'), col('.')]
   Lookup
-  AssertEqual 1, line('.')
+  AssertEqual [4, 16], [line('.'), col('.')]
+
+Given vim:
+  call s:func()
+  let s:func = 42
+  function! s:func(a, b)
+  endfunc
+  let s:func = 42
+  call s:func()
+Do:
+  Gw
+Then (:Lookup cycles through script-local function definitions):
+  AssertEqual [6, 6] , [line('.'), col('.')]
+  Lookup
+  AssertEqual [3, 13] , [line('.'), col('.')]
+  Lookup
+  AssertEqual [3, 13] , [line('.'), col('.')]
