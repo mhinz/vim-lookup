@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/mhinz/vim-lookup.svn?branch=master)](https://travis-ci.org/mhinz/vim-lookup)
+[![Build Status](https://travis-ci.org/mhinz/vim-lookup.svg?branch=master)](https://travis-ci.org/mhinz/vim-lookup)
 
 # vim-lookup
 
