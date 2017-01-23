@@ -40,9 +40,9 @@ endfunction
 function! s:find_autoload_def(name, pattern) abort
   let path = printf('autoload/%s.vim', substitute(a:name, '#', '/', 'g'))
   let aufiles = globpath(&runtimepath, path, '', 1)
-  " if empty(aufiles) && exists('b:git_dir')
-  "   let aufiles = [fnamemodify(b:git_dir, ':h') .'/'. path]
-  " endif
+  if empty(aufiles) && exists('b:git_dir')
+    let aufiles = [fnamemodify(b:git_dir, ':h') .'/'. path]
+  endif
   if empty(aufiles)
     call search(a:pattern)
   else
