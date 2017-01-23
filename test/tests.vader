@@ -38,15 +38,17 @@ Then (:Lookup cycles through script-local functions):
 
 Execute (:Lookup jumps to autoload variable):
   edit fixture/plugin/auto.vim
-  normal! 1Gw
+  normal! 4G3w
   Lookup
   AssertEqual 'fixture/autoload/auto/foo.vim', expand('%')
   AssertEqual [5, 5], [line('.'), col('.')]
+  execute "normal! \<c-o>"
+  AssertEqual 'fixture/plugin/auto.vim', expand('%')
   bwipeout
 
 Execute (:Lookup jumps to autoload function):
   edit fixture/plugin/auto.vim
-  normal! 2Gw
+  normal! 5G3w
   Lookup
   AssertEqual 'fixture/autoload/auto/foo.vim', expand('%')
   AssertEqual [1, 11], [line('.'), col('.')]
