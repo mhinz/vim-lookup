@@ -14,8 +14,6 @@ function! lookup#lookup()
     call s:find_local_var_def(name[2:])
   elseif name =~ '^<sid>'
     call s:find_local_var_def(name[5:])
-  elseif stridx(name, '.') > 0
-    call search('\c\v^\s*fu%[nction]!?\s+.{-}\.'. name[stridx(name,'.')+1:], 'cesw')
   elseif name =~ '#' && name[0] != '#'
     call s:find_au_def(name)
   endif
@@ -23,7 +21,7 @@ function! lookup#lookup()
 endfunction
 
 function! s:find_local_func_def(name)
-  call search('\c\v^<fu%[nction]!?\s+%(s:|\<sid\>)\zs\V'. a:name, 'bsw')
+  call search('\c\v<fu%[nction]!?\s+%(s:|\<sid\>)\zs\V'. a:name, 'bsw')
 endfunction
 
 function! s:find_local_var_def(name)
@@ -32,7 +30,7 @@ endfunction
 
 function! s:find_au_def(name)
   let [path, function] = split(a:name, '.*\zs#')
-  let pattern = '\c\v^\s*fu%[nction]!?\s+\V'. path .'#'. function .'\>'
+  let pattern = '\c\v<fu%[nction]!?\s+\V'. path .'#'. function .'\>'
   let name = printf('autoload/%s.vim', substitute(path, '#', '/', 'g'))
   let aufiles = globpath(&runtimepath, name, '', 1)
   if empty(aufiles) && exists('b:git_dir')
