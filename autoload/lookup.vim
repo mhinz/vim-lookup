@@ -4,20 +4,17 @@
 " autocmd FileType vim nnoremap <buffer><silent> <cr> :call lookup#lookup()<cr>
 "
 function! lookup#lookup() abort
+  let dispatch = [
+        \ [function('s:find_local_var_def'), function('s:find_local_func_def')],
+        \ [function('s:find_autoload_var_def'), function('s:find_autoload_func_def')]]
   let isk = &iskeyword
   setlocal iskeyword+=:,.,<,>,#,(
   let name = expand('<cword>')
   let &iskeyword = isk
-  if name =~ '('
-    call s:find_local_func_def(matchstr(name,
-          \ '\v\c^%(s:|\<sid\>)\zs.{-}\ze\('))
-  elseif name =~ '^s:'
-    call s:find_local_var_def(name[2:])
-  elseif name =~ '^<sid>'
-    call s:find_local_var_def(name[5:])
-  elseif name =~ '#' && name[0] != '#'
-    call s:find_au_def(name)
-  endif
+  let is_func = name =~ '(' ? 1 : 0
+  let is_auto = name =~ '#' ? 1 : 0
+  let name = matchstr(name, '\v\c^%(s:|\<sid\>)\zs.{-}\ze%(\(|$)')
+  call dispatch[is_auto][is_func](name)
 endfunction
 
 function! s:find_local_func_def(name) abort
@@ -28,19 +25,29 @@ function! s:find_local_var_def(name) abort
   call search('\c\v<let\s+s:\zs\V'.a:name.'\s*\=', 'bsw')
 endfunction
 
-function! s:find_au_def(name) abort
-  let [path, function] = split(a:name, '.*\zs#')
-  let pattern = '\c\v<fu%[nction]!?\s+\V'. path .'#'. function .'\>'
+function! s:find_autoload_func_def(name) abort
+  let [path, func] = split(a:name, '.*\zs#')
+  let pattern = '\c\v<fu%[nction]!?\s+\V'. path .'#'. func .'\>'
+  call s:find_autoload_def(pattern)
+endfunction
+
+function! s:find_autoload_var_def(name) abort
+  let [path, var] = split(a:name, '.*\zs#')
+  let pattern = '\c\v<let\s+\V'. path .'#'. var .'\>'
+  call s:find_autoload_def(pattern)
+endfunction
+
+function! s:find_autoload_def(pattern) abort
   let name = printf('autoload/%s.vim', substitute(path, '#', '/', 'g'))
   let aufiles = globpath(&runtimepath, name, '', 1)
   if empty(aufiles) && exists('b:git_dir')
     let aufiles = [fnamemodify(b:git_dir, ':h') .'/'. name]
   endif
   if empty(aufiles)
-    call search(pattern)
+    call search(a:pattern)
   else
     let aufile = aufiles[0]
-    let lnum = match(readfile(aufile), pattern)
+    let lnum = match(readfile(aufile), a:pattern)
     if lnum > -1
       execute 'edit +'. (lnum+1) aufile
     endif
