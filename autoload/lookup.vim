@@ -3,10 +3,11 @@
 "
 " autocmd FileType vim nnoremap <buffer><silent> <cr> :call lookup#lookup()<cr>
 "
-function! lookup#lookup()
+function! lookup#lookup() abort
   let isk = &iskeyword
   setlocal iskeyword+=:,.,<,>,#,(
   let name = expand('<cword>')
+  let &iskeyword = isk
   if name =~ '('
     call s:find_local_func_def(matchstr(name,
           \ '\v\c^%(s:|\<sid\>)\zs.{-}\ze\('))
@@ -17,18 +18,17 @@ function! lookup#lookup()
   elseif name =~ '#' && name[0] != '#'
     call s:find_au_def(name)
   endif
-  let &iskeyword = isk
 endfunction
 
-function! s:find_local_func_def(name)
+function! s:find_local_func_def(name) abort
   call search('\c\v<fu%[nction]!?\s+%(s:|\<sid\>)\zs\V'. a:name, 'bsw')
 endfunction
 
-function! s:find_local_var_def(name)
+function! s:find_local_var_def(name) abort
   call search('\c\v<let\s+s:\zs\V'.a:name.'\s*\=', 'bsw')
 endfunction
 
-function! s:find_au_def(name)
+function! s:find_au_def(name) abort
   let [path, function] = split(a:name, '.*\zs#')
   let pattern = '\c\v<fu%[nction]!?\s+\V'. path .'#'. function .'\>'
   let name = printf('autoload/%s.vim', substitute(path, '#', '/', 'g'))
