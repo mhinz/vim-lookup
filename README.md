@@ -1,10 +1,15 @@
+[![Build Status](https://travis-ci.org/mhinz/vim-lookup.svn?branch=master)](https://travis-ci.org/mhinz/vim-lookup)
+
 # vim-lookup
 
-This plugin knows how to jump to definitions in a Vim buffer:
+This plugin is meant for VimL programmers. It knows how to jump to the
+definitions of script-local and autoload variables or functions:
 
-- **script-local variables** (`s:var`)
-- **script-local functions** (`s:func()`, `<sid>func()`)
-- **autoload functions** (`autoload#func()`)
+- [x] `s:var`
+- [x] `s:func()`
+- [x] `<sid>func()`
+- [x] `autoload#foo#var`
+- [x] `autoload#foo#func()`
 
 ### Usage
 
