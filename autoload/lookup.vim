@@ -15,6 +15,7 @@ function! lookup#lookup() abort
   let is_auto = name =~ '#' ? 1 : 0
   let name = matchstr(name, '\v\c^%(s:|\<sid\>)?\zs.{-}\ze%(\(|$)')
   call dispatch[is_auto][is_func](name)
+  normal! zv
 endfunction
 
 function! s:find_local_func_def(name) abort
