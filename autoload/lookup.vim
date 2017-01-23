@@ -13,7 +13,7 @@ function! lookup#lookup() abort
   let &iskeyword = isk
   let is_func = name =~ '(' ? 1 : 0
   let is_auto = name =~ '#' ? 1 : 0
-  let name = matchstr(name, '\v\c^%(s:|\<sid\>)\zs.{-}\ze%(\(|$)')
+  let name = matchstr(name, '\v\c^%(s:|\<sid\>)?\zs.{-}\ze%(\(|$)')
   call dispatch[is_auto][is_func](name)
 endfunction
 
@@ -27,22 +27,22 @@ endfunction
 
 function! s:find_autoload_func_def(name) abort
   let [path, func] = split(a:name, '.*\zs#')
-  let pattern = '\c\v<fu%[nction]!?\s+\V'. path .'#'. func .'\>'
-  call s:find_autoload_def(pattern)
+  let pattern = '\c\v<fu%[nction]!?\s+\zs\V'. path .'#'. func .'\>'
+  call s:find_autoload_def(path, pattern)
 endfunction
 
 function! s:find_autoload_var_def(name) abort
   let [path, var] = split(a:name, '.*\zs#')
-  let pattern = '\c\v<let\s+\V'. path .'#'. var .'\>'
-  call s:find_autoload_def(pattern)
+  let pattern = '\c\v<let\s+\zs\V'. path .'#'. var .'\>'
+  call s:find_autoload_def(path, pattern)
 endfunction
 
-function! s:find_autoload_def(pattern) abort
-  let name = printf('autoload/%s.vim', substitute(path, '#', '/', 'g'))
-  let aufiles = globpath(&runtimepath, name, '', 1)
-  if empty(aufiles) && exists('b:git_dir')
-    let aufiles = [fnamemodify(b:git_dir, ':h') .'/'. name]
-  endif
+function! s:find_autoload_def(name, pattern) abort
+  let path = printf('autoload/%s.vim', substitute(a:name, '#', '/', 'g'))
+  let aufiles = globpath(&runtimepath, path, '', 1)
+  " if empty(aufiles) && exists('b:git_dir')
+  "   let aufiles = [fnamemodify(b:git_dir, ':h') .'/'. path]
+  " endif
   if empty(aufiles)
     call search(a:pattern)
   else
@@ -50,6 +50,7 @@ function! s:find_autoload_def(pattern) abort
     let lnum = match(readfile(aufile), a:pattern)
     if lnum > -1
       execute 'edit +'. (lnum+1) aufile
+      call search(a:pattern)
     endif
   endif
 endfunction

@@ -9,7 +9,7 @@ Given vim:
   endfunc
 Do:
   6Gw
-Then (:Lookup cycles through script-local variable definitions):
+Then (:Lookup cycles through script-local variables):
   AssertEqual [6, 5], [line('.'), col('.')]
   Lookup
   AssertEqual [4, 16], [line('.'), col('.')]
@@ -29,9 +29,25 @@ Given vim:
   call s:func()
 Do:
   Gw
-Then (:Lookup cycles through script-local function definitions):
-  AssertEqual [6, 6] , [line('.'), col('.')]
+Then (:Lookup cycles through script-local functions):
+  AssertEqual [6, 6], [line('.'), col('.')]
   Lookup
-  AssertEqual [3, 13] , [line('.'), col('.')]
+  AssertEqual [3, 13], [line('.'), col('.')]
   Lookup
-  AssertEqual [3, 13] , [line('.'), col('.')]
+  AssertEqual [3, 13], [line('.'), col('.')]
+
+Execute (:Lookup jumps to autoload variable):
+  edit fixture/plugin/auto.vim
+  normal! 1Gw
+  Lookup
+  AssertEqual 'fixture/autoload/auto/foo.vim', expand('%')
+  AssertEqual [5, 5], [line('.'), col('.')]
+  bwipeout
+
+Execute (:Lookup jumps to autoload function):
+  edit fixture/plugin/auto.vim
+  normal! 2Gw
+  Lookup
+  AssertEqual 'fixture/autoload/auto/foo.vim', expand('%')
+  AssertEqual [1, 11], [line('.'), col('.')]
+  bwipeout
