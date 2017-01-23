@@ -8,8 +8,9 @@ function! lookup#lookup() abort
         \ [function('s:find_local_var_def'), function('s:find_local_func_def')],
         \ [function('s:find_autoload_var_def'), function('s:find_autoload_func_def')]]
   let isk = &iskeyword
-  setlocal iskeyword+=:,.,<,>,#,(
+  setlocal iskeyword+=:,<,>,#,(
   let name = expand('<cword>')
+  let name = substitute(name, '\v^.*\ze%(s:|\<sid\>)', '', '')
   let &iskeyword = isk
   let is_func = name =~ '(' ? 1 : 0
   let is_auto = name =~ '#' ? 1 : 0
