@@ -10,6 +10,7 @@ definitions of script-local and autoload variables or functions:
 - [x] `<sid>func()`
 - [x] `autoload#foo#var`
 - [x] `autoload#foo#func()`
+- [x] `'autoload#foo#func'`
 
 ### Usage
 

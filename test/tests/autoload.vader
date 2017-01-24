@@ -24,3 +24,8 @@ Execute (:Lookup jumps to autoload function):
   Lookup
   AssertEqual 'fixture/autoload/auto/foo.vim', expand('%')
   AssertEqual [1, 11], [line('.'), col('.')]
+  execute "normal! \<c-o>10G23|"
+  AssertEqual 'fixture/plugin/auto.vim', expand('%')
+  Lookup
+  AssertEqual 'fixture/autoload/auto/foo.vim', expand('%')
+  AssertEqual [1, 11], [line('.'), col('.')]
