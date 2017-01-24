@@ -25,5 +25,5 @@ Afterwards just hit `<cr>` somewhere over the name of a variable or function to
 jump to its definition.
 
 In ambiguous cases, `<cr>` will cycle through all occurrences. This is done on
-purpose. If you want a list of all occurences, have a look at plugins like
-[vim-grepper](https://github.com/mhinz/vim-grepper) instead.
+purpose. If you want a list of all occurences, have a look at `:h [I` or plugins
+like [vim-grepper](https://github.com/mhinz/vim-grepper) instead.
