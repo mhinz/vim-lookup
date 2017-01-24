@@ -30,7 +30,7 @@ like [vim-grepper](https://github.com/mhinz/vim-grepper) instead.
 
 ### Alternatives
 
-This plugin works for out-of-the-box for all Vim scripts in the runtimepath (`:h
+This plugin works out-of-the-box for all Vim scripts in the runtimepath (`:h
 'rtp'`). If you're a fan of tags though, you might want to use [universal
 ctags](https://github.com/universal-ctags/ctags) together with one of the
 numerous Vim plugins that manage tags files.
