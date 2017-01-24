@@ -22,7 +22,8 @@ autocmd FileType vim nnoremap <buffer><silent> <cr>  :call lookup#lookup()<cr>
 ```
 
 Afterwards just hit `<cr>` somewhere over the name of a variable or function to
-jump to its definition.
+jump to its definition. Use `<c-o>` to go back to the previous entry in the
+[jump list](https://github.com/mhinz/vim-galore/#changelist-jumplist).
 
 In ambiguous cases, `<cr>` will cycle through all occurrences. This is done on
 purpose. If you want a list of all occurences, have a look at `:h [I` or plugins
