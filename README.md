@@ -27,3 +27,10 @@ jump to its definition.
 In ambiguous cases, `<cr>` will cycle through all occurrences. This is done on
 purpose. If you want a list of all occurences, have a look at `:h [I` or plugins
 like [vim-grepper](https://github.com/mhinz/vim-grepper) instead.
+
+### Alternatives
+
+This plugin works for out-of-the-box for all Vim scripts in the runtimepath (`:h
+'rtp'`). If you're a fan of tags though, you might want to use [universal
+ctags](https://github.com/universal-ctags/ctags) together with one of the
+numerous Vim plugins that manage tags files.
