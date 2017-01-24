@@ -1,4 +1,4 @@
-function! auto#foo#func()
+function! auto#foo#func(...)
   return 'func'
 endfunction
 

@@ -2,6 +2,7 @@ function! Foo(...)
 endfunction
 
 call Foo(auto#foo#var,v:lang)
-call Foo(auto#foo#func())
-" silent! echomsg auto#foo#var
-" silent! echomsg auto#foo#func()
+silent! echomsg auto#foo#var
+
+call Foo(auto#foo#func(1,2))
+silent! echomsg auto#foo#func()

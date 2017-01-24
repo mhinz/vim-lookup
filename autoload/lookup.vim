@@ -9,12 +9,11 @@ function! lookup#lookup() abort
         \ [function('s:find_autoload_var_def'), function('s:find_autoload_func_def')]]
   let isk = &iskeyword
   setlocal iskeyword+=:,<,>,#
-  let name = matchstr(getline('.'), '\k*\%'.col('.').'c\k*.')
+  let name = matchstr(getline('.'), '\k*\%'.col('.').'c\k*(\=')
   let &iskeyword = isk
-  let [name, end] = split(name, '\ze.$')
-  let is_func = end == '(' ? 1 : 0
+  let is_func = name  =~ '($' ? 1 : 0
+  let name = matchstr(name, '\v^%(s:|\<sid\>)?\zs.{-}\ze\(?$')
   let is_auto = name =~ '#' ? 1 : 0
-  let name = substitute(name, '\v^%(s:|\<sid\>)\ze', '', '')
   call dispatch[is_auto][is_func](name)
   normal! zv
 endfunction

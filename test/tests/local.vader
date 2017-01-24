@@ -1,0 +1,29 @@
+Given vim:
+  function! s:func(a, b)
+  endfunc
+  let s:var = 'foo'
+  execute 'let s:var = "bar"'
+  echomsg s:var
+  let s:var = 'foo'
+  function! s:func(a, b)
+  endfunc
+
+Execute (:Lookup cycles through script-local variables):
+  normal! 3GwE
+  AssertEqual [3, 9], [line('.'), col('.')]
+  Lookup
+  AssertEqual [3, 7], [line('.'), col('.')]
+  Lookup
+  AssertEqual [6, 7], [line('.'), col('.')]
+  Lookup
+  AssertEqual [4, 16], [line('.'), col('.')]
+  Lookup
+  AssertEqual [3, 7], [line('.'), col('.')]
+
+Execute (:Lookup cycles through script-local functions):
+  normal! 7GW
+  AssertEqual [7, 11], [line('.'), col('.')]
+  Lookup
+  AssertEqual [1, 13], [line('.'), col('.')]
+  Lookup
+  AssertEqual [7, 13], [line('.'), col('.')]

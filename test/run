@@ -25,6 +25,6 @@ if [[ ! -d vader.vim/plugin ]]; then
     git clone --depth=1 https://github.com/junegunn/vader.vim.git
 fi
 
-$vim -Nnu vimrc -i NONE +'Vader! tests.vader'
+$vim -Nnu vimrc -i NONE +'Vader! tests/*.vader'
 
 echo -e "\nExecutable used: $vim\n"

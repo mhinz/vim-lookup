@@ -1,0 +1,26 @@
+After:
+  bwipeout
+
+Execute (:Lookup jumps to autoload variable):
+  edit fixture/plugin/auto.vim
+  normal! 5G^3w
+  Lookup
+  AssertEqual 'fixture/autoload/auto/foo.vim', expand('%')
+  AssertEqual [5, 5], [line('.'), col('.')]
+  execute "normal! \<c-o>k"
+  AssertEqual 'fixture/plugin/auto.vim', expand('%')
+  Lookup
+  AssertEqual 'fixture/autoload/auto/foo.vim', expand('%')
+  AssertEqual [5, 5], [line('.'), col('.')]
+
+Execute (:Lookup jumps to autoload function):
+  edit fixture/plugin/auto.vim
+  normal! 8G^3w
+  Lookup
+  AssertEqual 'fixture/autoload/auto/foo.vim', expand('%')
+  AssertEqual [1, 11], [line('.'), col('.')]
+  execute "normal! \<c-o>k"
+  AssertEqual 'fixture/plugin/auto.vim', expand('%')
+  Lookup
+  AssertEqual 'fixture/autoload/auto/foo.vim', expand('%')
+  AssertEqual [1, 11], [line('.'), col('.')]
