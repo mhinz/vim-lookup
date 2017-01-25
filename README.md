@@ -14,20 +14,25 @@ definitions of script-local and autoload variables or functions:
 
 ### Usage
 
-The plugin exposes only a single function that should be mapped to your
-favourite keys, e.g.
+- Use `lookup#lookup()` to jump to the defintion of the identifier under the
+  cursor.
+- Use `lookup#pop()` (or the default mapping
+  [`<c-o>`](https://github.com/mhinz/vim-galore/#changelist-jumplist)) to jump
+  back.
+
+### Configuration
 
 ```viml
 autocmd FileType vim nnoremap <buffer><silent> <cr>  :call lookup#lookup()<cr>
 ```
 
-Afterwards just hit `<cr>` somewhere over the name of a variable or function to
-jump to its definition. Use `<c-o>` to go back to the previous entry in the
-[jump list](https://github.com/mhinz/vim-galore/#changelist-jumplist).
+Alternatively, you can replace the default mappings Vim uses for
+[tagstack](https://neovim.io/doc/user/tagsrch.html#tag-stack) navigation:
 
-In ambiguous cases, `<cr>` will cycle through all occurrences. This is done on
-purpose. If you want a list of all occurences, have a look at `:h [I` or plugins
-like [vim-grepper](https://github.com/mhinz/vim-grepper) instead.
+```viml
+autocmd FileType vim nnoremap <buffer><silent> <cr>  :call lookup#lookup()<cr>
+autocmd FileType vim nnoremap <buffer><silent> <bs>  :call lookup#pop()<cr>
+```
 
 ### Alternatives
 
