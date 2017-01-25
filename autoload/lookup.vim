@@ -82,7 +82,7 @@ function! s:find_autoload_def(name, pattern) abort
       endif
       let lnum = match(readfile(file), a:pattern)
       if lnum > -1
-        execute 'edit +'. (lnum+1) file
+        execute 'edit +'. (lnum+1) fnameescape(file)
         call search(a:pattern)
         return 1
         break
