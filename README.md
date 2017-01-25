@@ -12,6 +12,9 @@ definitions of script-local and autoload variables or functions:
 - [x] `autoload#foo#func()`
 - [x] `'autoload#foo#func'`
 
+No tags file needed. It simply uses your
+[runtimepath](https://neovim.io/doc/user/options.html#'rtp').
+
 ### Usage
 
 - Use `lookup#lookup()` to jump to the defintion of the identifier under the
@@ -30,13 +33,13 @@ Alternatively, you can replace the default mappings Vim uses for
 [tagstack](https://neovim.io/doc/user/tagsrch.html#tag-stack) navigation:
 
 ```viml
-autocmd FileType vim nnoremap <buffer><silent> <cr>  :call lookup#lookup()<cr>
-autocmd FileType vim nnoremap <buffer><silent> <bs>  :call lookup#pop()<cr>
+autocmd FileType vim nnoremap <buffer><silent> <c-]>  :call lookup#lookup()<cr>
+autocmd FileType vim nnoremap <buffer><silent> <c-t>  :call lookup#pop()<cr>
 ```
 
 ### Alternatives
 
-This plugin works out-of-the-box for all Vim scripts in the runtimepath (`:h
-'rtp'`). If you're a fan of tags though, you might want to use [universal
-ctags](https://github.com/universal-ctags/ctags) together with one of the
-numerous Vim plugins that manage tags files.
+If you're a fan of tags, you might want to use [universal
+ctags](https://github.com/universal-ctags/ctags) to generate a proper tags file
+for your Vim scripts first and then use it together with one of the numerous Vim
+plugins that manage tags files.
