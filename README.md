@@ -43,3 +43,9 @@ If you're a fan of tags, you might want to use [universal
 ctags](https://github.com/universal-ctags/ctags) to generate a proper tags file
 for your Vim scripts first and then use it together with one of the numerous Vim
 plugins that manage tags files.
+
+### Other useful VimL plugins
+
+- [exception.vim](https://github.com/tweekmonster/exception.vim)
+- [helpful.vim](https://github.com/tweekmonster/helpful.vim)
+- [vim-scriptease](https://github.com/tpope/vim-scriptease)
