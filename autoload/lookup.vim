@@ -42,6 +42,117 @@ function! lookup#pop()
   call cursor(pos[1:])
 endfunction
 
+" lookup#errors() {{{1
+"
+" Parses errors from :messages and displays them in the quickfix window.
+" Since the last error is often not the origin error, a list of consecutive
+" exceptions are collected.
+function! lookup#errors() abort
+  let lines = reverse(s:exec_lines('silent messages'))
+  if len(lines) < 3
+    return
+  endif
+
+  let i = 0
+  let e = 0
+  let errors = []
+
+  while i < len(lines)
+    if i > 1 && lines[i] =~# '^Error detected while processing function '
+          \ && lines[i-1] =~? '^line\s\+\d\+'
+      let lnum = matchstr(lines[i-1], '\d\+')
+      let stack = printf('%s[%d]', lines[i][41:-2], lnum)
+      call add(errors, {
+            \  'stack': reverse(split(stack, '\.\.')),
+            \  'msg': lines[i-2],
+            \ })
+      let e = i
+    endif
+
+    let i += 1
+    if e && i - e > 3
+      break
+    endif
+  endwhile
+
+  if empty(errors)
+    return
+  endif
+
+  let errlist = []
+
+  for err in errors
+    let nw = len(len(err.stack))
+    let i = 0
+    call add(errlist, {
+          \   'text': err.msg,
+          \   'lnum': 0,
+          \   'bufnr': 0,
+          \   'type': 'E',
+          \ })
+
+    for t in err.stack
+      let func = matchstr(t, '.\{-}\ze\[\d\+\]$')
+      let lnum = str2nr(matchstr(t, '\[\zs\d\+\ze\]$'))
+
+      let verb = s:exec_lines('silent! verbose function '.func)
+      if len(verb) < 2
+        continue
+      endif
+
+      let src = fnamemodify(matchstr(verb[1], 'Last set from \zs.\+'), ':p')
+      if !filereadable(src)
+        continue
+      endif
+
+      let pat = '\C^\s*fu\%[nction]!\?\s\+'
+      if func =~# '^<SNR>'
+        let pat .= '\%(<\%(sid\|SID\)>\|s:\)'
+        let func = matchstr(func, '<SNR>\d\+_\zs.\+')
+      endif
+      let pat .= func.'\>'
+
+      for line in readfile(src)
+        if line =~# pat
+          break
+        endif
+        let lnum += 1
+      endfor
+
+      if !empty(src) && !empty(func)
+        let fname = fnamemodify(src, ':.')
+        call add(errlist, {
+              \   'text': printf('%*s. %s', nw, '#'.i, t),
+              \   'filename': fname,
+              \   'lnum': str2nr(lnum),
+              \   'type': 'I',
+              \ })
+      endif
+
+      let i += 1
+    endfor
+  endfor
+
+  let s:defaults = [
+        \   {
+        \     'cmd': ['pbcopy', 'pbpaste'],
+        \     '+': ['', ''],
+        \     '*': ['', ''],
+        \   },
+        \   {
+        \     'cmd': 'xsel',
+        \     '+': ['--nodetach -i -b', '-o -b'],
+        \     '*': ['--nodetach -i -p', '-o -p'],
+        \   },
+        \   ...
+        \ ]
+
+  if !empty(errlist)
+    call setqflist(errlist, 'r')
+    copen
+  endif
+endfunction
+
 " s:find_local_func_def() {{{1
 function! s:find_local_func_def(name) abort
   return search('\c\v<fu%[nction]!?\s+%(s:|\<sid\>)\zs\V'. a:name, 'bsw')
@@ -107,3 +218,18 @@ endfunction
 function! s:getcurpos() abort
   return [expand('%:p')] + getcurpos()[1:]
 endfunction
+
+" s:exec_lines() {{{1
+function! s:exec_lines(cmd) abort
+  if exists('*execute')
+    return split(execute(a:cmd), "\n")
+  endif
+
+  redir => output
+  execute a:cmd
+  redir END
+  return split(output, "\n")
+endfunction
+
+" }}}
+" vim: set ft=vim fdm=marker ts=2 sw=2 et :
