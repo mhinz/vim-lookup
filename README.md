@@ -2,8 +2,8 @@
 
 # vim-lookup
 
-This plugin is meant for VimL programmers. It knows how to jump to the
-definitions of script-local and autoload variables or functions:
+This plugin is meant for VimL programmers. It jumps to definitions of variables
+or functions even when they're in other files:
 
 - [x] `s:var`
 - [x] `s:func()`
@@ -14,6 +14,12 @@ definitions of script-local and autoload variables or functions:
 
 No tags file needed. It simply uses your
 [runtimepath](https://neovim.io/doc/user/options.html#'rtp').
+
+It also works for global functions if they're defined or found in the current
+file:
+
+- [x] `GlobalFunc()`
+- [x] `g:GlobalFunc()`
 
 ### Usage
 
