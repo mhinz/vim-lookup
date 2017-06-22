@@ -43,8 +43,23 @@ function! lookup#pop()
 endfunction
 
 " s:find_local_func_def() {{{1
-function! s:find_local_func_def(name) abort
-  return search('\c\v<fu%[nction]!?\s+%(s:|\<sid\>)\zs\V'. a:name, 'bsw')
+function! s:find_local_func_def(funcname) abort
+  if search('\c\v<fu%[nction]!?\s+%(s:|\<sid\>)\zs\V'.a:funcname.'\>', 'bsw') != 0
+    return
+  endif
+
+  let lang = v:lang
+  language message C
+  redir => funcloc
+    silent! execute 'verbose function' a:funcname
+  redir END
+  silent! execute 'language message' lang
+  if funcloc !~# 'Undefined function'
+    execute 'edit' substitute(split(funcloc, '\n')[1], '.*Last set from \ze', '', '')
+  endif
+
+  let fn = substitute(a:funcname, '^g:', '', '')
+  call search('\c\v<fu%[nction]!?\s+%(g:)?\zs\V'.fn.'\>', 'bsw')
 endfunction
 
 " s:find_local_var_def() {{{1
