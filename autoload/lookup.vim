@@ -14,7 +14,7 @@ function! lookup#lookup() abort
   let &iskeyword = isk
   let is_func = name =~ '($' ? 1 : 0
   let could_be_funcref = name =~ '[''"]$' ? 1 : 0
-  let name = matchstr(name, '\v^%(s:|\<sid\>)?\zs.{-}\ze[\("'']?$')
+  let name = matchstr(name, '\c\v^%(s:|\<sid\>)?\zs.{-}\ze[\("'']?$')
   let is_auto = name =~ '#' ? 1 : 0
   let position = s:getcurpos()
   if !dispatch[is_auto][is_func](name) && !is_func && could_be_funcref
