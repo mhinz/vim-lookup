@@ -54,9 +54,11 @@ function! s:find_local_func_def(funcname) abort
     silent! execute 'verbose function' a:funcname
   redir END
   silent! execute 'language message' lang
-  if funcloc !~# 'Undefined function'
-    execute 'edit' substitute(split(funcloc, '\n')[1], '.*Last set from \ze', '', '')
+  if funcloc =~# 'E\d\{2,3}:'
+    return
   endif
+
+  execute 'edit' substitute(split(funcloc, '\n')[1], '.*Last set from \ze', '', '')
 
   let fn = substitute(a:funcname, '^g:', '', '')
   call search('\c\v<fu%[nction]!?\s+%(g:)?\zs\V'.fn.'\>', 'bsw')
