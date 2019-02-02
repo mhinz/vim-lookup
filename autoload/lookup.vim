@@ -51,7 +51,7 @@ function! s:find_local_func_def(funcname) abort
   let lang = v:lang
   language message C
   redir => funcloc
-    silent! execute 'verbose function' a:funcname
+  silent! execute 'verbose function' a:funcname
   redir END
   silent! execute 'language message' lang
   if funcloc =~# 'E\d\{2,3}:'
@@ -83,6 +83,8 @@ function! s:find_autoload_var_def(name) abort
   return s:find_autoload_def(path, pattern)
 endfunction
 
+let s:CMP = SpaceVim#api#import('vim#compatible')
+
 " s:find_autoload_def() {{{1
 function! s:find_autoload_def(name, pattern) abort
   let path = printf('autoload/%s.vim', substitute(a:name, '#', '/', 'g'))
@@ -94,6 +96,7 @@ function! s:find_autoload_def(name, pattern) abort
     return search(a:pattern)
   else
     for file in aufiles
+      let file = s:CMP.resolve(path)
       if !filereadable(file)
         continue
       endif
@@ -124,3 +127,5 @@ endfunction
 function! s:getcurpos() abort
   return [expand('%:p')] + getcurpos()[1:]
 endfunction
+
+" vim:set et nowrap sw=2 cc=80:

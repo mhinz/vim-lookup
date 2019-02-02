@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/mhinz/vim-lookup.svg?branch=master)](https://travis-ci.org/mhinz/vim-lookup)
 
 # vim-lookup
+> An forked repo which is based on SpaceVim API.
 
 This plugin is meant for VimL programmers. It jumps to definitions of variables
 or functions even when they're in other files:
