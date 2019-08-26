@@ -58,7 +58,13 @@ function! s:find_local_func_def(funcname) abort
     return
   endif
 
-  execute 'edit' substitute(split(funcloc, '\n')[1], '.*Last set from \ze', '', '')
+  let match = substitute(split(funcloc, '\n')[1], '.*Last set from \ze', '', '')
+  let file = substitute(match, ' line [0-9]\+$', '', 'g')
+  let line = substitute(match, ' line \([0-9]\+\)$', '\1', 'g')
+  execute 'edit' file
+  let cursorpos = getpos('.')
+  let cursorpos[1] = line
+  call setpos('.', cursorpos)
 
   let fn = substitute(a:funcname, '^g:', '', '')
   call search('\c\v<fu%[nction]!?\s+%(g:)?\zs\V'.fn.'\>', 'bsw')
