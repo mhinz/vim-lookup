@@ -3,7 +3,8 @@
 # vim-lookup
 
 This plugin is meant for VimL programmers. It jumps to definitions of variables
-or functions even when they're in other files:
+or functions, as if tags were used, without needing a tags file. It simply
+uses your [runtimepath](https://neovim.io/doc/user/options.html#'rtp').
 
 - [x] `s:var`
 - [x] `s:func()`
@@ -11,9 +12,6 @@ or functions even when they're in other files:
 - [x] `autoload#foo#var`
 - [x] `autoload#foo#func()`
 - [x] `'autoload#foo#func'`
-
-No tags file needed. It simply uses your
-[runtimepath](https://neovim.io/doc/user/options.html#'rtp').
 
 It also works for global functions if they're defined or found in the current
 file:
@@ -42,13 +40,6 @@ Alternatively, you can replace the default mappings Vim uses for
 autocmd FileType vim nnoremap <buffer><silent> <c-]>  :call lookup#lookup()<cr>
 autocmd FileType vim nnoremap <buffer><silent> <c-t>  :call lookup#pop()<cr>
 ```
-
-### Alternatives
-
-If you're a fan of tags, you might want to use [universal
-ctags](https://github.com/universal-ctags/ctags) to generate a proper tags file
-for your Vim scripts first and then use it together with one of the numerous Vim
-plugins that manage tags files.
 
 ### Other useful VimL plugins
 
