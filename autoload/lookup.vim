@@ -24,6 +24,9 @@ function! lookup#lookup() abort
   let didmove = position != s:getcurpos() ? 1 : 0
   if didmove
     call s:push(position)
+  else
+    echo 'No match'
+    return 0
   endif
   normal! zv
   return didmove
