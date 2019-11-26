@@ -41,7 +41,7 @@ function! lookup#pop()
     return
   endif
   let pos = remove(w:lookup_stack, 0)
-  execute (bufexists(pos[0]) ? 'buffer' : 'edit') fnameescape(pos[0])
+  execute 'silent!' (bufexists(pos[0]) ? 'buffer' : 'edit') fnameescape(pos[0])
   call cursor(pos[1:])
 endfunction
 
@@ -61,7 +61,7 @@ function! s:find_local_func_def(funcname) abort
     return
   endif
 
-  execute 'edit' matchstr(funcloc, '.*Last set from \zs.*\ze line \d\+$')
+  execute 'silent! edit' matchstr(funcloc, '.*Last set from \zs.*\ze line \d\+$')
 
   let fn = substitute(a:funcname, '^g:', '', '')
   call search('\c\v<fu%[nction]!?\s+%(g:)?\zs\V'.fn.'\>', 'bsw')
@@ -102,7 +102,7 @@ function! s:find_autoload_def(name, pattern) abort
       endif
       let lnum = match(readfile(file), a:pattern)
       if lnum > -1
-        execute 'edit +'. (lnum+1) fnameescape(file)
+        execute 'silent! edit +'. (lnum+1) fnameescape(file)
         call search(a:pattern)
         return 1
         break
