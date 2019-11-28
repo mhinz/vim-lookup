@@ -88,27 +88,29 @@ endfunction
 
 " s:find_autoload_def() {{{1
 function! s:find_autoload_def(name, pattern) abort
-  let path = printf('autoload/%s.vim', substitute(a:name, '#', '/', 'g'))
-  let aufiles = globpath(&runtimepath, path, '', 1)
-  if empty(aufiles) && exists('b:git_dir')
-    let aufiles = [fnamemodify(b:git_dir, ':h') .'/'. path]
-  endif
-  if empty(aufiles)
-    return search(a:pattern)
-  else
-    for file in aufiles
-      if !filereadable(file)
-        continue
-      endif
-      let lnum = match(readfile(file), a:pattern)
-      if lnum > -1
-        execute 'silent! edit +'. (lnum+1) fnameescape(file)
-        call search(a:pattern)
-        return 1
-        break
-      endif
-    endfor
-  endif
+  for dir in ['autoload', 'plugin']
+    let path = printf('%s/%s.vim', dir, substitute(a:name, '#', '/', 'g'))
+    let aufiles = globpath(&runtimepath, path, '', 1)
+    if empty(aufiles) && exists('b:git_dir')
+      let aufiles = [fnamemodify(b:git_dir, ':h') .'/'. path]
+    endif
+    if empty(aufiles)
+      return search(a:pattern)
+    else
+      for file in aufiles
+        if !filereadable(file)
+          continue
+        endif
+        let lnum = match(readfile(file), a:pattern)
+        if lnum > -1
+          execute 'silent! edit +'. (lnum+1) fnameescape(file)
+          call search(a:pattern)
+          return 1
+          break
+        endif
+      endfor
+    endif
+  endfor
   return 0
 endfunction
 

@@ -13,6 +13,9 @@ uses your [runtimepath](https://neovim.io/doc/user/options.html#'rtp').
 - [x] `autoload#foo#func()`
 - [x] `'autoload#foo#func'`
 
+Sometimes a function `foo#func()` is not found in `autoload/foo.vim` but
+`plugin/foo.vim`. This case is handled as well.
+
 It also works for global functions if they're defined or found in the current
 file:
 
