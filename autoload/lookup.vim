@@ -26,7 +26,7 @@ function! lookup#lookup() abort
   endif
   let didmove = position != s:getcurpos() ? 1 : 0
   if didmove
-    call s:push(position)
+    call s:push(position, name)
   else
     echo 'No match'
     return 0
@@ -45,7 +45,7 @@ function! lookup#pop()
   endif
   let pos = remove(w:lookup_stack, 0)
   execute 'silent!' (bufexists(pos[0]) ? 'buffer' : 'edit') fnameescape(pos[0])
-  call cursor(pos[1:])
+  call cursor(pos[2:])
 endfunction
 
 " s:find_local_func_def() {{{1
@@ -140,7 +140,8 @@ function! s:find_autoload_def(name, pattern) abort
 endfunction
 
 " s:push() {{{1
-function! s:push(position) abort
+function! s:push(position, tagname) abort
+  call s:pushtagstack(a:position[1:], a:tagname)
   if !has_key(w:, 'lookup_stack') || empty(w:lookup_stack)
     let w:lookup_stack = [a:position]
     return
@@ -150,7 +151,25 @@ function! s:push(position) abort
   endif
 endfunction
 
+" s:pushtagstack() {{{1
+function! s:pushtagstack(curpos, tagname) abort
+    if !exists('*gettagstack') || !exists('*settagstack') || !has('patch-8.2.0077') " patch that adds 't' argument
+        " do nothing
+        return
+    endif
+
+    let item = {'bufnr': a:curpos[0], 'from': a:curpos, 'tagname': a:tagname}
+
+    let winid = win_getid()
+    let stack = gettagstack(winid)
+    let stack['items'] = [item]
+    call settagstack(winid, stack, 't')
+endfunction
+
 " s:getcurpos() {{{1
 function! s:getcurpos() abort
-  return [expand('%:p')] + getcurpos()[1:]
+  let pos = getcurpos()
+  " getcurpos always returns bufnr 0.
+  let pos[0] = bufnr('%')
+  return [expand('%:p')] + pos
 endfunction
