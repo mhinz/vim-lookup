@@ -88,7 +88,8 @@ function! s:jump_to_file_defining(symbol_type, symbol_name) abort
     return
   endif
 
-  execute 'silent! edit' matchstr(location, '.*Last set from \zs.*\ze line \d\+$')
+  let matches = matchlist(location, '\v.*Last set from (.*) line (\d+)>')
+  execute 'silent! edit +'. matches[2] matches[1]
 endfunction
 
 " s:find_local_var_def() {{{1
