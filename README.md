@@ -2,8 +2,8 @@
 
 # vim-lookup
 
-This plugin is meant for VimL programmers. It jumps to definitions of variables
-or functions, as if tags were used, without needing a tags file. It simply
+This plugin is meant for VimL programmers. It jumps to definitions of variables,
+functions, and commands as if tags were used, without needing a tags file. It simply
 uses your [runtimepath](https://neovim.io/doc/user/options.html#'rtp').
 
 - [x] `s:var`
@@ -12,6 +12,7 @@ uses your [runtimepath](https://neovim.io/doc/user/options.html#'rtp').
 - [x] `autoload#foo#var`
 - [x] `autoload#foo#func()`
 - [x] `'autoload#foo#func'`
+- [x] `Command`
 
 Sometimes a function `foo#func()` is not found in `autoload/foo.vim` but
 `plugin/foo.vim`. This case is handled as well.
