@@ -14,10 +14,13 @@ function! lookup#lookup() abort
   let &iskeyword = isk
   let is_func = name =~ '($' ? 1 : 0
   let could_be_funcref = name =~ '[''"]$' ? 1 : 0
+  let is_cmd = name =~# '\v^\u\w*>'
   let name = matchstr(name, '\c\v^%(s:|\<sid\>)?\zs.{-}\ze[\("'']?$')
   let is_auto = name =~ '#' ? 1 : 0
   let position = s:getcurpos()
-  if !dispatch[is_auto][is_func](name) && !is_func && could_be_funcref
+  if is_cmd && s:find_local_cmd_def(name)
+    " Found command.
+  elseif !dispatch[is_auto][is_func](name) && !is_func && could_be_funcref
     let is_func = 1
     call dispatch[is_auto][is_func](name)
   endif
@@ -51,20 +54,41 @@ function! s:find_local_func_def(funcname) abort
     return
   endif
 
-  let lang = v:lang
-  language message C
-  redir => funcloc
-    silent! execute 'verbose function' a:funcname
-  redir END
-  silent! execute 'language message' lang
-  if funcloc =~# 'E\d\{2,3}:'
+  call s:jump_to_file_defining('function', a:funcname)
+  let fn = substitute(a:funcname, '^g:', '', '')
+  return search('\c\v<fu%[nction]!?\s+%(g:)?\zs\V'.fn.'\>', 'bsw')
+endfunction
+
+" s:find_local_cmd_def() {{{1
+function! s:find_local_cmd_def(cmdname) abort
+  let pattern = '\c\v<com%[mand]!?\s+(-\w+.{-}\s+)*\zs\V'.a:cmdname.'\>'
+  if search(pattern, 'bsw') != 0
     return
   endif
 
-  execute 'silent! edit' matchstr(funcloc, '.*Last set from \zs.*\ze line \d\+$')
+  call s:jump_to_file_defining('command', a:cmdname)
+  return search(pattern, 'bsw')
+endfunction
 
-  let fn = substitute(a:funcname, '^g:', '', '')
-  call search('\c\v<fu%[nction]!?\s+%(g:)?\zs\V'.fn.'\>', 'bsw')
+" s:jump_to_file_defining() {{{1
+" Expects symbol_type = 'command' or 'function'
+function! s:jump_to_file_defining(symbol_type, symbol_name) abort
+  let lang = v:lang
+  language message C
+  redir => location
+    silent! execute 'verbose ' a:symbol_type a:symbol_name
+  redir END
+  let failed = 0
+  if a:symbol_type == 'command'
+    let failed = location =~# 'No user-defined commands found'
+  endif
+  silent! execute 'language message' lang
+
+  if failed || location =~# 'E\d\{2,3}:'
+    return
+  endif
+
+  execute 'silent! edit' matchstr(location, '.*Last set from \zs.*\ze line \d\+$')
 endfunction
 
 " s:find_local_var_def() {{{1
