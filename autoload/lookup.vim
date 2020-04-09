@@ -18,12 +18,21 @@ function! lookup#lookup() abort
   let name = matchstr(name, '\c\v^%(s:|\<sid\>)?\zs.{-}\ze[\("'']?$')
   let is_auto = name =~ '#' ? 1 : 0
   let position = s:getcurpos()
-  if is_cmd && s:find_local_cmd_def(name)
-    " Found command.
-  elseif !dispatch[is_auto][is_func](name) && !is_func && could_be_funcref
-    let is_func = 1
-    call dispatch[is_auto][is_func](name)
-  endif
+  try
+    if is_cmd && s:find_local_cmd_def(name)
+      " Found command.
+    elseif !dispatch[is_auto][is_func](name) && !is_func && could_be_funcref
+      let is_func = 1
+      call dispatch[is_auto][is_func](name)
+    endif
+  catch /^Vim\%((\a\+)\)\=:/
+    echohl ErrorMsg
+    " Strip off the :edit command prefix to make it look like a normal vim
+    " error message.
+    echomsg substitute(v:exception, "^[^:]*:", "", "")
+    echohl NONE
+    return 0
+  endtry
   let didmove = position != s:getcurpos() ? 1 : 0
   if didmove
     call s:push(position, name)
@@ -89,7 +98,7 @@ function! s:jump_to_file_defining(symbol_type, symbol_name) abort
   endif
 
   let matches = matchlist(location, '\v.*Last set from (.*) line (\d+)>')
-  execute 'silent! edit +'. matches[2] matches[1]
+  execute 'silent edit +'. matches[2] matches[1]
 endfunction
 
 " s:find_local_var_def() {{{1
@@ -128,7 +137,7 @@ function! s:find_autoload_def(name, pattern) abort
         endif
         let lnum = match(readfile(file), a:pattern)
         if lnum > -1
-          execute 'silent! edit +'. (lnum+1) fnameescape(file)
+          execute 'silent edit +'. (lnum+1) fnameescape(file)
           call search(a:pattern)
           return 1
           break
