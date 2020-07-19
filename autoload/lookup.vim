@@ -11,6 +11,7 @@ function! lookup#lookup() abort
   let isk = &iskeyword
   setlocal iskeyword+=:,<,>,#
   let name = matchstr(getline('.'), '\k*\%'.col('.').'c\k*[("'']\?')
+  let plug = matchstr(getline('.'), '\c<plug>\k*\%'.col('.').'c\k*[("'']\?')
   let &iskeyword = isk
   let is_func = name =~ '($' ? 1 : 0
   let could_be_funcref = name =~ '[''"]$' ? 1 : 0
@@ -24,6 +25,8 @@ function! lookup#lookup() abort
     elseif !dispatch[is_auto][is_func](name) && !is_func && could_be_funcref
       let is_func = 1
       call dispatch[is_auto][is_func](name)
+    elseif !empty(plug) && s:find_plug_map_def(plug)
+      " Found plug.
     endif
   catch /^Vim\%((\a\+)\)\=:/
     echohl ErrorMsg
@@ -76,6 +79,17 @@ function! s:find_local_cmd_def(cmdname) abort
   endif
 
   call s:jump_to_file_defining('command', a:cmdname)
+  return search(pattern, 'bsw')
+endfunction
+
+" s:find_plug_map_def() {{{1
+function! s:find_plug_map_def(plugname) abort
+  let pattern = '\c\v<[nvxsoilct]?(nore)?m%[ap]\s*(\<[bnseu]\w+\>\s*)*\s+\zs\V'.a:plugname.'\>'
+  if search(pattern, 'bsw') != 0
+    return
+  endif
+
+  call s:jump_to_file_defining('map', a:plugname)
   return search(pattern, 'bsw')
 endfunction
 
