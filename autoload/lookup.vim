@@ -4,7 +4,7 @@
 "
 " autocmd FileType vim nnoremap <buffer><silent> <cr> :call lookup#lookup()<cr>
 "
-function! lookup#lookup(word = '') abort
+function! lookup#lookup() abort
   let dispatch = [
         \ [function('s:find_local_var_def'), function('s:find_local_func_def')],
         \ [function('s:find_autoload_var_def'), function('s:find_autoload_func_def')]]
