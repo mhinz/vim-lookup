@@ -66,7 +66,7 @@ function! s:find_local_func_def(funcname) abort
     return
   endif
 
-  call s:jump_to_file_defining('function', a:funcname)
+  call lookup#jump_to_file_defining('function', a:funcname)
   let fn = substitute(a:funcname, '^g:', '', '')
   return search('\c\v<fu%[nction]!?\s+%(g:)?\zs\V'.fn.'\>', 'bsw')
 endfunction
@@ -78,7 +78,7 @@ function! s:find_local_cmd_def(cmdname) abort
     return
   endif
 
-  call s:jump_to_file_defining('command', a:cmdname)
+  call lookup#jump_to_file_defining('command', a:cmdname)
   return search(pattern, 'bsw')
 endfunction
 
@@ -89,13 +89,13 @@ function! s:find_plug_map_def(plugname) abort
     return
   endif
 
-  call s:jump_to_file_defining('map', a:plugname)
+  call lookup#jump_to_file_defining('map', a:plugname)
   return search(pattern, 'bsw')
 endfunction
 
 " s:jump_to_file_defining() {{{1
 " Expects symbol_type = 'command' or 'function'
-function! s:jump_to_file_defining(symbol_type, symbol_name) abort
+function! lookup#jump_to_file_defining(symbol_type, symbol_name) abort
   let lang = v:lang
   language message C
   redir => location
